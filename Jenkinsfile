@@ -3,13 +3,18 @@ pipeline {
 
     stages {
         stage('Build Docker Image') {
-            steps {
-                bat 'echo "Building Docker image..."'
+            script{
+                dockerapp = docker.build("brunorichart/guia-jenkins:${env.BUILD_ID}", '-f ./src/Dockerfile ./src')
             }
         }
         stage('Push Docker Image') {
             steps {
-                bat 'echo "Pushing Docker image to registry..."'
+                script {
+                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub') {
+                        dockerapp.push('latest')
+                        dockerapp.push("${env.BUILD_ID}")
+                    }
+                }
             }
         }
         stage('Deploy to Kubernetes') {	
