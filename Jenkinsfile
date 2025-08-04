@@ -31,9 +31,9 @@ pipeline {
             }
 
             steps {
-                withKubeConfig([credentialsId: 'kubeconfig']) {
+                script {
                     sh 'sed -i "s/{{tag}}/$tag_version/g" ./k8s/deployment.yaml'
-                    sh "kubectl apply -f ./k8s/deployment.yaml"
+                    sh "kubectl --kubeconfig=C:/infra/kind-config apply -f ./k8s/deployment.yaml"
                 }
             }
         }
