@@ -1,12 +1,19 @@
 pipeline {
     agent any
 
+    environment {
+        IMAGE_NAME = "brunorichart/guia-jenkins"
+    }
+
     stages {
         stage('Build Docker Image') {
-            script{
-                dockerapp = docker.build("brunorichart/guia-jenkins:${env.BUILD_ID}", '-f ./src/Dockerfile ./src')
+            steps {
+                script {
+                    dockerapp = docker.build("${IMAGE_NAME}:${env.BUILD_ID}", '-f ./src/Dockerfile ./src')
+                }
             }
         }
+
         stage('Push Docker Image') {
             steps {
                 script {
@@ -17,9 +24,10 @@ pipeline {
                 }
             }
         }
-        stage('Deploy to Kubernetes') {	
+
+        stage('Deploy to Kubernetes') {
             steps {
-                bat 'echo "Executing deployment to Kubernetes..."'
+                bat 'echo Executing deployment to Kubernetes...'
             }
         }
     }
